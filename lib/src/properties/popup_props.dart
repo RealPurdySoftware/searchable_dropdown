@@ -34,6 +34,9 @@ class PopupProps<T> {
   ///custom layout for loading items
   final LoadingBuilder? loadingBuilder;
 
+  //Builder for a final default item to be added to the search list (such as an "Add New" button)
+  final LastItemBuilder? lastItemBuilder;
+
   ///custom layout for error
   final ErrorBuilder? errorBuilder;
 
@@ -95,6 +98,7 @@ class PopupProps<T> {
     this.searchDelay,
     this.onDismissed,
     this.emptyBuilder,
+    this.lastItemBuilder,
     this.itemBuilder,
     this.errorBuilder,
     this.loadingBuilder,
@@ -118,6 +122,7 @@ class PopupProps<T> {
     this.searchDelay,
     this.onDismissed,
     this.emptyBuilder,
+    this.lastItemBuilder,
     this.itemBuilder,
     this.errorBuilder,
     this.loadingBuilder,
@@ -144,6 +149,7 @@ class PopupProps<T> {
     this.searchDelay,
     this.onDismissed,
     this.emptyBuilder,
+    this.lastItemBuilder,
     this.itemBuilder,
     this.errorBuilder,
     this.loadingBuilder,
@@ -174,6 +180,7 @@ class PopupProps<T> {
     this.searchDelay,
     this.onDismissed,
     this.emptyBuilder,
+    this.lastItemBuilder,
     this.itemBuilder,
     this.errorBuilder,
     this.loadingBuilder,
@@ -200,6 +207,7 @@ class PopupProps<T> {
     this.searchDelay,
     this.onDismissed,
     this.emptyBuilder,
+    this.lastItemBuilder,
     this.itemBuilder,
     this.errorBuilder,
     this.loadingBuilder,
@@ -244,6 +252,7 @@ class PopupPropsMultiSelection<T> extends PopupProps<T> {
     super.searchDelay,
     super.onDismissed,
     super.emptyBuilder,
+    super.lastItemBuilder,
     super.errorBuilder,
     super.loadingBuilder,
     super.showSelectedItems,
@@ -271,6 +280,7 @@ class PopupPropsMultiSelection<T> extends PopupProps<T> {
     super.searchDelay,
     super.onDismissed,
     super.emptyBuilder,
+    super.lastItemBuilder,
     super.itemBuilder,
     super.errorBuilder,
     super.loadingBuilder,
@@ -298,6 +308,7 @@ class PopupPropsMultiSelection<T> extends PopupProps<T> {
     super.searchDelay,
     super.onDismissed,
     super.emptyBuilder,
+    super.lastItemBuilder,
     super.itemBuilder,
     super.errorBuilder,
     super.loadingBuilder,
@@ -329,6 +340,7 @@ class PopupPropsMultiSelection<T> extends PopupProps<T> {
     super.searchDelay,
     super.onDismissed,
     super.emptyBuilder,
+    super.lastItemBuilder,
     super.itemBuilder,
     super.errorBuilder,
     super.loadingBuilder,
@@ -359,6 +371,7 @@ class PopupPropsMultiSelection<T> extends PopupProps<T> {
     super.searchDelay,
     super.onDismissed,
     super.emptyBuilder,
+    super.lastItemBuilder,
     super.errorBuilder,
     super.loadingBuilder,
     super.showSelectedItems,
@@ -378,6 +391,7 @@ class PopupPropsMultiSelection<T> extends PopupProps<T> {
           favoriteItemProps: popupProps.favoriteItemProps,
           disabledItemFn: popupProps.disabledItemFn,
           emptyBuilder: popupProps.emptyBuilder,
+          lastItemBuilder: popupProps.lastItemBuilder,
           errorBuilder: popupProps.errorBuilder,
           isFilterOnline: popupProps.isFilterOnline,
           itemBuilder: popupProps.itemBuilder,

@@ -48,6 +48,7 @@ typedef Widget ErrorBuilder<T>(
 );
 typedef Widget EmptyBuilder<T>(BuildContext context, String searchEntry);
 typedef Widget LoadingBuilder<T>(BuildContext context, String searchEntry);
+typedef Widget LastItemBuilder<T>(BuildContext context);
 typedef Future<bool?> BeforeChange<T>(T? prevItem, T? nextItem);
 typedef Future<bool?> BeforePopupOpening<T>(T? selectedItem);
 typedef Future<bool?> BeforePopupOpeningMultiSelection<T>(List<T> selItems);

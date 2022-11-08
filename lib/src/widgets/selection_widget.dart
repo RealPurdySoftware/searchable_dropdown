@@ -195,8 +195,14 @@ class SelectionWidgetState<T> extends State<SelectionWidget<T>> {
                                 widget.popupProps.listViewProps.restorationId,
                             clipBehavior:
                                 widget.popupProps.listViewProps.clipBehavior,
-                            itemCount: snapshot.data!.length,
+                            itemCount: widget.popupProps.lastItemBuilder != null
+                                ? snapshot.data!.length + 1
+                                : snapshot.data!.length,
                             itemBuilder: (context, index) {
+                              if (index == snapshot.data!.length) {
+                                return widget
+                                    .popupProps.lastItemBuilder!(context);
+                              }
                               var item = snapshot.data![index];
                               return widget.isMultiSelectionMode
                                   ? _itemWidgetMultiSelection(item)
@@ -206,7 +212,7 @@ class SelectionWidgetState<T> extends State<SelectionWidget<T>> {
                         );
                       },
                     ),
-                    _loadingWidget()
+                    _loadingWidget(),
                   ],
                 ),
               ),
@@ -274,12 +280,23 @@ class SelectionWidgetState<T> extends State<SelectionWidget<T>> {
         context,
         searchBoxController.text,
       );
-    else
+    else if (widget.popupProps.lastItemBuilder != null) {
+      return _lastItem();
+    } else {
       return Container(
         height: 70,
         alignment: Alignment.center,
         child: Text("No data found"),
       );
+    }
+  }
+
+  Widget _lastItem() {
+    if (widget.popupProps.lastItemBuilder != null) {
+      return widget.popupProps.lastItemBuilder!(context);
+    } else {
+      return Container();
+    }
   }
 
   Widget _errorWidget(dynamic error) {
