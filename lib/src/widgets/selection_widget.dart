@@ -10,26 +10,26 @@ import 'checkbox_widget.dart';
 class SelectionWidget<T> extends StatefulWidget {
   final List<T> items;
   final ValueChanged<List<T>>? onChanged;
-  final DropdownSearchOnFind<T>? asyncItems;
   final DropdownSearchItemAsString<T>? itemAsString;
   final DropdownSearchFilterFn<T>? filterFn;
   final DropdownSearchCompareFn<T>? compareFn;
   final List<T> defaultSelectedItems;
   final PopupPropsMultiSelection<T> popupProps;
   final bool isMultiSelectionMode;
+  final Stream<List<T>>? itemSourceStream;
 
-  const SelectionWidget({
-    Key? key,
-    required this.popupProps,
-    this.defaultSelectedItems = const [],
-    this.isMultiSelectionMode = false,
-    this.items = const [],
-    this.onChanged,
-    this.asyncItems,
-    this.itemAsString,
-    this.filterFn,
-    this.compareFn,
-  }) : super(key: key);
+  const SelectionWidget(
+      {Key? key,
+      required this.popupProps,
+      this.defaultSelectedItems = const [],
+      this.isMultiSelectionMode = false,
+      this.items = const [],
+      this.onChanged,
+      this.itemAsString,
+      this.filterFn,
+      this.compareFn,
+      this.itemSourceStream})
+      : super(key: key);
 
   @override
   SelectionWidgetState<T> createState() => SelectionWidgetState<T>();
@@ -62,13 +62,17 @@ class SelectionWidgetState<T> extends State<SelectionWidget<T>> {
       });
     });
 
-    Future.delayed(
-      Duration.zero,
-      () => _manageItemsByFilter(
+    widget.itemSourceStream?.listen((items) {
+      _manageItemsByFilter(searchBoxController.text, items);
+    });
+
+    Future.delayed(Duration.zero, () async {
+      _manageItemsByFilter(
         searchBoxController.text,
+        widget.items,
         isFirstLoad: true,
-      ),
-    );
+      );
+    });
   }
 
   @override
@@ -337,13 +341,14 @@ class SelectionWidgetState<T> extends State<SelectionWidget<T>> {
   }
 
   void _onTextChanged(String filter) async {
-    _manageItemsByFilter(filter);
+    _manageItemsByFilter(filter, _cachedItems);
   }
 
   ///Function that filter item (online and offline) base on user filter
   ///[filter] is the filter keyword
   ///[isFirstLoad] true if it's the first time we load data from online, false other wises
-  void _manageItemsByFilter(String filter, {bool isFirstLoad = false}) async {
+  void _manageItemsByFilter(String filter, List<T> items,
+      {bool isFirstLoad = false}) async {
     _loadingNotifier.value = true;
 
     List<T> applyFilter(String filter) {
@@ -361,47 +366,13 @@ class SelectionWidgetState<T> extends State<SelectionWidget<T>> {
       }).toList();
     }
 
-    //load offline data for the first time
-    if (isFirstLoad) _cachedItems.addAll(widget.items);
-
-    //manage offline items
-    if (widget.asyncItems != null &&
-        (widget.popupProps.isFilterOnline || isFirstLoad)) {
-      try {
-        final List<T> onlineItems = [];
-        onlineItems.addAll(await widget.asyncItems!(filter));
-
-        //Remove all old data
-        _cachedItems.clear();
-        //add offline items
-        _cachedItems.addAll(widget.items);
-        //if filter online we filter only local list based on entered keyword (filter)
-        if (widget.popupProps.isFilterOnline == true) {
-          var filteredLocalList = applyFilter(filter);
-          _cachedItems.clear();
-          _cachedItems.addAll(filteredLocalList);
-        }
-
-        //add new online items to list
-        _cachedItems.addAll(onlineItems);
-
-        //don't filter data , they are already filtered online and local data are already filtered
-        if (widget.popupProps.isFilterOnline == true)
-          _addDataToStream(_cachedItems);
-        else
-          _addDataToStream(applyFilter(filter));
-      } catch (e) {
-        _addErrorToStream(e);
-        //if offline items count > 0 , the error will be not visible for the user
-        //As solution we show it in dialog
-        if (widget.items.isNotEmpty) {
-          _showErrorDialog(e);
-          _addDataToStream(applyFilter(filter));
-        }
-      }
-    } else {
-      _addDataToStream(applyFilter(filter));
+    //If items is not the same list as _cachedItems, replace _cachedItems' content with items
+    if (_cachedItems != items) {
+      _cachedItems.clear();
+      _cachedItems.addAll(items);
     }
+
+    _addDataToStream(applyFilter(filter));
 
     _loadingNotifier.value = false;
   }

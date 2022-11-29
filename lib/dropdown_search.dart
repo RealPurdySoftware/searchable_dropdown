@@ -90,8 +90,8 @@ class DropdownSearch<T> extends StatefulWidget {
   ///selected items
   final List<T> selectedItems;
 
-  ///function that returns item from API
-  final DropdownSearchOnFind<T>? asyncItems;
+  //Stream that will serve as this drop down's item source
+  final Stream<List<T>>? itemSourceStream;
 
   ///called when a new item is selected
   final ValueChanged<T?>? onChanged;
@@ -171,7 +171,7 @@ class DropdownSearch<T> extends StatefulWidget {
     this.onChanged,
     this.items = const [],
     this.selectedItem,
-    this.asyncItems,
+    this.itemSourceStream,
     this.dropdownBuilder,
     this.dropdownDecoratorProps = const DropDownDecoratorProps(),
     this.clearButtonProps = const ClearButtonProps(),
@@ -201,7 +201,7 @@ class DropdownSearch<T> extends StatefulWidget {
     Key? key,
     this.autoValidateMode = AutovalidateMode.disabled,
     this.items = const [],
-    this.asyncItems,
+    this.itemSourceStream,
     this.dropdownDecoratorProps = const DropDownDecoratorProps(),
     this.clearButtonProps = const ClearButtonProps(),
     this.dropdownButtonProps = const DropdownButtonProps(),
@@ -657,7 +657,7 @@ class DropdownSearchState<T> extends State<DropdownSearch<T>> {
       itemAsString: widget.itemAsString,
       filterFn: widget.filterFn,
       items: widget.items,
-      asyncItems: widget.asyncItems,
+      itemSourceStream: widget.itemSourceStream,
       onChanged: _handleOnChangeSelectedItems,
       compareFn: widget.compareFn,
       isMultiSelectionMode: isMultiSelectionMode,
